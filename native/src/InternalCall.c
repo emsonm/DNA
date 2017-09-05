@@ -115,6 +115,9 @@ static tInternalCall internalCalls[] = {
 	{NULL, NULL,          "GetGenericArguments", System_RuntimeType_GetGenericArguments, TYPE_SYSTEM_ARRAY_TYPE, 0},
 	{NULL, NULL,          "GetElementType", System_RuntimeType_GetElementType, TYPE_SYSTEM_TYPE, 0},
 
+	{NULL, "Delegate", "GetMethodNameImpl", System_Delegate_GetMethodNameImpl, TYPE_SYSTEM_STRING, 0},
+	{NULL, NULL, "GetParameterCountImpl", System_Delegate_GetParameterCountImpl, TYPE_SYSTEM_INT32, 0},
+
 	{NULL, "Char", "GetUnicodeCategory", System_Char_GetUnicodeCategory, TYPE_SYSTEM_GLOBALIZATION_UNICODECATEGORY, 1, {TYPE_SYSTEM_CHAR}},
 	{NULL, NULL  , "ToLowerInvariant", System_Char_ToLowerInvariant, TYPE_SYSTEM_CHAR, 1, {TYPE_SYSTEM_CHAR}},
 	{NULL, NULL  , "ToUpperInvariant", System_Char_ToUpperInvariant, TYPE_SYSTEM_CHAR, 1, {TYPE_SYSTEM_CHAR}},
@@ -138,7 +141,9 @@ static tInternalCall internalCalls[] = {
 	{NULL, NULL,   "Cos", System_Math_Cos, TYPE_SYSTEM_DOUBLE, 1, {TYPE_SYSTEM_DOUBLE}},
 	{NULL, NULL,   "Tan", System_Math_Tan, TYPE_SYSTEM_DOUBLE, 1, {TYPE_SYSTEM_DOUBLE}},
 	{NULL, NULL,   "Pow", System_Math_Pow, TYPE_SYSTEM_DOUBLE, 2, {TYPE_SYSTEM_DOUBLE, TYPE_SYSTEM_DOUBLE}},
+	{NULL, NULL,   "Log", System_Math_Log, TYPE_SYSTEM_DOUBLE, 1, {TYPE_SYSTEM_DOUBLE}},
 	{NULL, NULL,   "Sqrt", System_Math_Sqrt, TYPE_SYSTEM_DOUBLE, 1, {TYPE_SYSTEM_DOUBLE}},
+
 	{"System.Reflection", "MemberInfo", "GetCustomAttributes", Reflection_MemberInfo_GetCustomAttributes, TYPE_SYSTEM_ARRAY_NO_TYPE, 0},
 
 	{"System.Threading", "Thread", ".ctor", System_Threading_Thread_ctor, TYPE_SYSTEM_VOID, 1, {TYPE_SYSTEM_THREADING_THREADSTART}},
@@ -158,6 +163,7 @@ static tInternalCall internalCalls[] = {
 
 	{"System.IO", "FileInternal", "Open", System_IO_FileInternal_Open, TYPE_SYSTEM_INTPTR, 5, {TYPE_SYSTEM_STRING, TYPE_SYSTEM_IO_FILEMODE, TYPE_SYSTEM_IO_FILEACCESS, TYPE_SYSTEM_IO_FILESHARE, TYPE_SYSTEM_INTPTR}},
 	{NULL,        NULL,           "Read", System_IO_FileInternal_Read, TYPE_SYSTEM_INT32, 5, {TYPE_SYSTEM_INTPTR, TYPE_SYSTEM_ARRAY_BYTE, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INTPTR}},
+	{NULL,        NULL,           "Write", System_IO_FileInternal_Write, TYPE_SYSTEM_INT32, 5, {TYPE_SYSTEM_INTPTR, TYPE_SYSTEM_ARRAY_BYTE, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INTPTR}},
 	{NULL,        NULL,           "Close", System_IO_FileInternal_Close, TYPE_SYSTEM_VOID, 2, {TYPE_SYSTEM_INTPTR, TYPE_SYSTEM_INTPTR}},
 	{NULL,        NULL,           "GetCurrentDirectory", System_IO_FileInternal_GetCurrentDirectory, TYPE_SYSTEM_STRING, 1, {TYPE_SYSTEM_INTPTR}},
 	{NULL,        NULL,           "GetFileAttributes", System_IO_FileInternal_GetFileAttributes, TYPE_SYSTEM_IO_FILESYSTEMATTRIBUTES, 2, {TYPE_SYSTEM_STRING, TYPE_SYSTEM_INTPTR}},

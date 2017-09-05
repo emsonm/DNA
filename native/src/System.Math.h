@@ -27,6 +27,7 @@ tAsyncCall* System_Math_Sin(PTR pThis_, PTR pParams, PTR pReturnValue);
 tAsyncCall* System_Math_Cos(PTR pThis_, PTR pParams, PTR pReturnValue);
 tAsyncCall* System_Math_Tan(PTR pThis_, PTR pParams, PTR pReturnValue);
 tAsyncCall* System_Math_Pow(PTR pThis_, PTR pParams, PTR pReturnValue);
+tAsyncCall* System_Math_Log(PTR pThis_, PTR pParams, PTR pReturnValue);
 tAsyncCall* System_Math_Sqrt(PTR pThis_, PTR pParams, PTR pReturnValue);
 
 #endif

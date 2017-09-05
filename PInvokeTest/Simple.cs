@@ -5,7 +5,7 @@ namespace PInvokeTest
 {
     public static class Simple
     {
-        [DllImport("libSimple")]
+        [DllImport("libSimple", CallingConvention=CallingConvention.Cdecl)]
         extern public static int Test(int value);
     }
 }

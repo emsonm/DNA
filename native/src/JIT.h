@@ -34,7 +34,7 @@ typedef struct tExceptionHeader_ tExceptionHeader;
 // Pinvoke.c logic to work. It might even just be as simple as changing the return type of fnPInvoke from int
 // to U64, since it looks like that's hardcoded as the return type in Pinvoke.c. But I don't need to deal
 // with that now.
-typedef int(*fnPInvoke)(STRING libName, STRING funcName, STRING arg0);
+//typedef int(*fnPInvoke)(STRING libName, STRING funcName, STRING arg0);
 
 #include "Types.h"
 
@@ -107,7 +107,7 @@ typedef struct tJITCallPInvoke_ tJITCallPInvoke;
 struct tJITCallPInvoke_ {
 	U32 opCode;
 	// The native function to call
-	fnPInvoke fn;
+	void* fn; //fnPInvoke fn;
 	// The method that is being called
 	tMD_MethodDef *pMethod;
 	// The ImplMap of the function that's being called

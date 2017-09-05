@@ -49,6 +49,12 @@ tAsyncCall* System_Math_Pow(PTR pThis_, PTR pParams, PTR pReturnValue) {
 	return NULL;
 }
 
+tAsyncCall* System_Math_Log(PTR pThis_, PTR pParams, PTR pReturnValue) {
+	*(double*)pReturnValue = log(INTERNALCALL_PARAM(0, double));
+
+	return NULL;
+}
+
 tAsyncCall* System_Math_Sqrt(PTR pThis_, PTR pParams, PTR pReturnValue) {
 	*(double*)pReturnValue = sqrt(INTERNALCALL_PARAM(0, double));
 

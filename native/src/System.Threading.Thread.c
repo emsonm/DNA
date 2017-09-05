@@ -60,9 +60,15 @@ tAsyncCall* System_Threading_Thread_Start(PTR pThis_, PTR pParams, PTR pReturnVa
 		params[0] = (PTR)pStartObj;
 		paramBytes = sizeof(void*);
 	}
+	//if (pThread->hasParam) {
+	//	// If this method has an object parameter (ParameterizedThreadStart)
+	//	params[paramBytes] = (PTR)pThread->param;
+	//	paramBytes += sizeof(void*);
+	//}
 	if (pThread->hasParam) {
 		// If this method has an object parameter (ParameterizedThreadStart)
-		params[paramBytes] = (PTR)pThread->param;
+		//params[paramBytes] -> possible bug?
+		params[1] = (PTR)pThread->param;
 		paramBytes += sizeof(void*);
 	}
 

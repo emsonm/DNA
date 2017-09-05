@@ -88,27 +88,47 @@ static tLoadedLib* GetLib(STRING name) {
 	return pLib;
 }
 
+//fnPInvoke PInvoke_GetFunction(tMetaData *pMetaData, tMD_ImplMap *pImplMap) {
+//	tLoadedLib *pLib;
+//	STRING libName;
+//	void *pProc;
+//
+//	libName = MetaData_GetModuleRefName(pMetaData, pImplMap->importScope);
+//
+//#ifndef _WIN32
+//	return (fnPInvoke)invokeJsFunc;
+//#else 
+//	
+//	pLib = GetLib(libName);
+//	if (pLib == NULL) {
+//		// Library not found, so we can't find the function
+//		return NULL;
+//	}
+//
+//	pProc = GetProcAddress(pLib->pLib, pImplMap->importName);
+//#endif
+//	return pProc;
+//
+//}
+
 fnPInvoke PInvoke_GetFunction(tMetaData *pMetaData, tMD_ImplMap *pImplMap) {
 	tLoadedLib *pLib;
 	STRING libName;
 	void *pProc;
 
 	libName = MetaData_GetModuleRefName(pMetaData, pImplMap->importScope);
-
-#ifndef _WIN32
-	return (fnPInvoke)invokeJsFunc;
-#else 
-	
 	pLib = GetLib(libName);
 	if (pLib == NULL) {
 		// Library not found, so we can't find the function
 		return NULL;
 	}
 
+#if WIN32
 	pProc = GetProcAddress(pLib->pLib, pImplMap->importName);
+#else
+	pProc = dlsym(pLib->pLib, pImplMap->importName);
 #endif
 	return pProc;
-
 }
 
 static void* ConvertStringToANSI(HEAP_PTR pHeapEntry) {
@@ -169,7 +189,7 @@ U32 PInvoke_Call(tJITCallPInvoke *pCall, PTR pParams, PTR pReturnValue, tThread 
 	tMD_MethodDef *pMethod = pCall->pMethod;
 	tMD_TypeDef *pReturnType = pMethod->pReturnType;
 	tMD_ImplMap *pImplMap = pCall->pImplMap;
-	fnPInvoke pFn = pCall->fn;
+	void *pFn = pCall->fn; //fnPInvoke pFn = pCall->fn;
 	U32 _argOfs = 0, _argdOfs = 0, paramOfs = 0;
 	U32 _tempMemOfs = 0;
 	U32 i;
@@ -195,14 +215,14 @@ U32 PInvoke_Call(tJITCallPInvoke *pCall, PTR pParams, PTR pReturnValue, tThread 
 		}
 	}
 
-	// Prepend the 'libName' and 'funcName' strings to the set of arguments
-	// NOTE: These aren't currently used in js-interop.js, but they would be if I found a way
-	// to pass an arbitrary set of args without declaring the C func type in advance
-	_args[0] = (U32)MetaData_GetModuleRefName(pCall->pMethod->pMetaData, pCall->pImplMap->importScope);
-	_args[1] = (U32)pCall->pMethod->name;
-	_argOfs += 2;
-	SET_ARG_TYPE(0, DEFAULT);
-	SET_ARG_TYPE(1, DEFAULT);
+//	// Prepend the 'libName' and 'funcName' strings to the set of arguments
+//	// NOTE: These aren't currently used in js-interop.js, but they would be if I found a way
+//	// to pass an arbitrary set of args without declaring the C func type in advance
+//	_args[0] = (U32)MetaData_GetModuleRefName(pCall->pMethod->pMetaData, pCall->pImplMap->importScope);
+//	_args[1] = (U32)pCall->pMethod->name;
+//	_argOfs += 2;
+//	SET_ARG_TYPE(0, DEFAULT);
+//	SET_ARG_TYPE(1, DEFAULT);
 
 	numParams = pMethod->numberOfParameters;
 	for (param = 0, paramTypeNum = 0; param<numParams; param++, paramTypeNum++) {
@@ -250,16 +270,16 @@ U32 PInvoke_Call(tJITCallPInvoke *pCall, PTR pParams, PTR pReturnValue, tThread 
 		SET_ARG_TYPE(paramTypeNum + 2, paramType);
 	}
 
-	// [Steve edit] I'm hard-coding the pinvoke function pointer type here, as a workaround for
-	// Emscripten's function pointer limitations.
-	// See the longer comment in JIT.h for details.
-	if (funcParams != 255) {
-		Crash("PInvoke_Call() currently only supports calls of type 255; you tried to make a call of type %i.\n", funcParams);
-	}
-	int intRet = pFn((STRING)_args[0], (STRING)_args[1], (STRING)_args[2]);
-	u64Ret = (U64)intRet;
+//	// [Steve edit] I'm hard-coding the pinvoke function pointer type here, as a workaround for
+//	// Emscripten's function pointer limitations.
+//	// See the longer comment in JIT.h for details.
+//	if (funcParams != 255) {
+//		Crash("PInvoke_Call() currently only supports calls of type 255; you tried to make a call of type %i.\n", funcParams);
+//	}
+//	int intRet = pFn((STRING)_args[0], (STRING)_args[1], (STRING)_args[2]);
+//	u64Ret = (U64)intRet;
 
-	/*
+
 	switch (funcParams) {
 
 #include "PInvoke_CaseCode.h"
@@ -291,7 +311,7 @@ U32 PInvoke_Call(tJITCallPInvoke *pCall, PTR pParams, PTR pReturnValue, tThread 
 	default:
 		Crash("PInvoke_Call() Cannot handle the function parameters: 0x%08x", funcParams);
 	}
-	*/
+	
 
 	for (i=0; i<_tempMemOfs; i++) {
 		free(_pTempMem[i]);

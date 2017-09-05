@@ -2465,7 +2465,7 @@ JIT_NEWOBJECT_start:
 			obj = Heap_AllocType(pConstructorDef->pParentType);
 		} else {
 			// Need to set this to something non-NULL so that CreateParameters() works properly
-			obj = (HEAP_PTR)-1;
+			obj = (HEAP_PTR)(-1);
 		}
 
 		// Set up the new method state for the called method
@@ -3202,6 +3202,8 @@ finallyUnwindStack:
 		// Set the IP to the catch handler
 		pCurrentMethodState->ipOffset = pThread->pCatchExceptionHandler->handlerStart;
 		// Set the current method state
+		//FIX: LOAD_METHOD_STATE RESETS pCurrentMethodState. Which is wrong.
+		pThread->pCurrentMethodState = pCurrentMethodState; //ME20170905 - THIS WAS NOT HERE PREVIOUSLY
 		LOAD_METHOD_STATE();
 		// Push onto this stack-frame's evaluation stack the opject thrown
 		POP_ALL();

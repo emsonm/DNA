@@ -250,7 +250,9 @@ static U32 Receive_Check(PTR pThis_, PTR pParams, PTR pReturnValue, tAsyncCall *
 
 	if (r > 0) {
 		pState->count += r;
-		if (pState->count >= size) {
+		// Fix - we need data as it arrives!
+		if (pState->count >= 0) {
+//		if (pState->count >= size) {
 			// Got all required data
 			*(U32*)pReturnValue = pState->count;
 			*pError = 0;

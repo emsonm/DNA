@@ -52,7 +52,8 @@
 #define ELEMENT_TYPE_OBJECT		0x1c
 #define ELEMENT_TYPE_SZARRAY	0x1d
 #define ELEMENT_TYPE_MVAR		0x1e
-
+#define ELEMENT_TYPE_CMOD_REQD	0x1f
+#define ELEMENT_TYPE_CMOD_OPT	0x20
 
 extern tMD_TypeDef **types;
 #define TYPE_SYSTEM_OBJECT 0

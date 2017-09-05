@@ -24,6 +24,7 @@
 #include "Delegate.h"
 #include "MetaData.h"
 #include "Heap.h"
+#include "System.String.h"
 
 // Note that care is needed to ensure the target object refered to in the delegate is not accidently
 // garbage collected.
@@ -65,6 +66,33 @@ static tAsyncCall* ctor(PTR pThis_, PTR pParams, PTR pReturnValue) {
 	pThis->targetObj = ((HEAP_PTR*)pParams)[0];
 	pThis->pTargetMethod = ((tMD_MethodDef**)pParams)[1];
 	pThis->pNext = NULL;
+
+	return NULL;
+}
+
+tAsyncCall* System_Delegate_GetMethodNameImpl(PTR pThis_, PTR pParams, PTR pReturnValue) {
+	tSystemString *pSystemString;
+	tDelegate *pThis = (tDelegate*)pThis_;
+	U32 i, len;
+	len = strlen(pThis->pTargetMethod->name);
+
+	pSystemString = SystemString_CreateStringHeapObj(len);
+	for (i=0; i<len; i++) {
+		pSystemString->chars[i] = pThis->pTargetMethod->name[i];
+	}
+	*(HEAP_PTR*)pReturnValue = (HEAP_PTR)pSystemString;
+
+	return NULL;
+}
+
+
+tAsyncCall* System_Delegate_GetParameterCountImpl(PTR pThis_, PTR pParams, PTR pReturnValue) {
+	tSystemString *pSystemString;
+	tDelegate *pThis = (tDelegate*)pThis_;
+	U32 len;
+	len = (pThis->pTargetMethod->numberOfParameters);
+
+	*(U32*)pReturnValue = len;
 
 	return NULL;
 }

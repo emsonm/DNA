@@ -239,9 +239,12 @@ void MetaData_Fill_TypeDef_(tMD_TypeDef *pTypeDef, tMD_TypeDef **ppClassTypeArgs
 					pMethodDef->vTableOfs = virtualOfs++;
 				} else {
 					tMD_MethodDef *pVirtualOveriddenMethod;
-
+					if(pTypeDef->pParent->pVTable == NULL)
+					{
+						Crash("Trying to init %s before %s\n", pTypeDef->name,pTypeDef->pParent->name);
+					}
 					pVirtualOveriddenMethod = FindVirtualOverriddenMethod(pTypeDef->pParent, pMethodDef);
-					Assert(pVirtualOveriddenMethod != NULL);
+					Assert2(pVirtualOveriddenMethod != NULL,"Method to override NOT FOUND");
 					pMethodDef->vTableOfs = pVirtualOveriddenMethod->vTableOfs;
 				}
 			} else {
