@@ -68,6 +68,9 @@ tAsyncCall* System_IO_FileInternal_Open(PTR pThis_, PTR pParams, PTR pReturnValu
 	case FILEMODE_OPEN:
 		flags |= O_RDWR;
 		break;
+	case FILEMODE_OPENORCREATE:
+		flags |= O_CREAT | O_RDWR;
+		break;
 	default:
 		error = ERROR_UNKNOWNMODE;
 		goto done;
@@ -101,6 +104,31 @@ tAsyncCall* System_IO_FileInternal_Read(PTR pThis_, PTR pParams, PTR pReturnValu
 	pFirstElement = SystemArray_LoadElementAddress(dst, startOfs);
 
 	ret = read(f, pFirstElement, count);
+	if (ret < 0) {
+		error = errno;
+	}
+
+	*pError = error;
+	*(U32*)pReturnValue = ret;
+	return NULL;
+}
+
+tAsyncCall* System_IO_FileInternal_Write(PTR pThis_, PTR pParams, PTR pReturnValue) {
+	U32 f;
+	HEAP_PTR dst;
+	U32 startOfs, count;
+	U32 *pError;
+	PTR pFirstElement;
+	I32 ret = 0, error = 0;
+
+	f = ((U32*)pParams)[0];
+	dst = ((HEAP_PTR*)pParams)[1];
+	startOfs = ((U32*)pParams)[2];
+	count = ((U32*)pParams)[3];
+	pError = ((U32**)pParams)[4];
+	pFirstElement = SystemArray_LoadElementAddress(dst, startOfs);
+
+	ret = write(f, pFirstElement, count);
 	if (ret < 0) {
 		error = errno;
 	}

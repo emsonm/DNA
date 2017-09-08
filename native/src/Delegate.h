@@ -29,5 +29,7 @@ fnInternalCall Map_Delegate(tMD_MethodDef *pMethod);
 tMD_MethodDef* Delegate_GetMethod(void *pThis_);
 tMD_MethodDef* Delegate_GetMethodAndStore(void *pThis_, HEAP_PTR *pTargetObj, void **ppNextDelegate);
 
+tAsyncCall* System_Delegate_GetMethodNameImpl(PTR pThis_, PTR pParams, PTR pReturnValue);
+tAsyncCall* System_Delegate_GetParameterCountImpl(PTR pThis_, PTR pParams, PTR pReturnValue);
 
 #endif

@@ -74,7 +74,7 @@ static tLoadedLib* GetLib(STRING name) {
 			char *pError;
 			pError = dlerror();
 			if (pError) {
-				printf("dlopen() Error: '%s'",pError);
+				printf("dlopen() Error: '%s'", pError);
 			}
 		}
 #endif
@@ -88,34 +88,54 @@ static tLoadedLib* GetLib(STRING name) {
 	return pLib;
 }
 
+//fnPInvoke PInvoke_GetFunction(tMetaData *pMetaData, tMD_ImplMap *pImplMap) {
+//	tLoadedLib *pLib;
+//	STRING libName;
+//	void *pProc;
+//
+//	libName = MetaData_GetModuleRefName(pMetaData, pImplMap->importScope);
+//
+//#ifndef _WIN32
+//	return (fnPInvoke)invokeJsFunc;
+//#else 
+//	
+//	pLib = GetLib(libName);
+//	if (pLib == NULL) {
+//		// Library not found, so we can't find the function
+//		return NULL;
+//	}
+//
+//	pProc = GetProcAddress(pLib->pLib, pImplMap->importName);
+//#endif
+//	return pProc;
+//
+//}
+
 fnPInvoke PInvoke_GetFunction(tMetaData *pMetaData, tMD_ImplMap *pImplMap) {
 	tLoadedLib *pLib;
 	STRING libName;
 	void *pProc;
 
 	libName = MetaData_GetModuleRefName(pMetaData, pImplMap->importScope);
-
-#ifndef _WIN32
-	return (fnPInvoke)invokeJsFunc;
-#else 
-	
 	pLib = GetLib(libName);
 	if (pLib == NULL) {
 		// Library not found, so we can't find the function
 		return NULL;
 	}
 
+#if WIN32
 	pProc = GetProcAddress(pLib->pLib, pImplMap->importName);
+#else
+	pProc = dlsym(pLib->pLib, pImplMap->importName);
 #endif
 	return pProc;
-
 }
 
 static void* ConvertStringToANSI(HEAP_PTR pHeapEntry) {
 	U32 strLen, i;
 	STRING2 str = SystemString_GetString(pHeapEntry, &strLen);
-	unsigned char *pAnsi = (unsigned char*)malloc(strLen+1);
-	for (i=0; i<strLen; i++) {
+	unsigned char *pAnsi = (unsigned char*)malloc(strLen + 1);
+	for (i = 0; i < strLen; i++) {
 		pAnsi[i] = (unsigned char)str[i];
 	}
 	pAnsi[i] = 0;
@@ -126,7 +146,7 @@ static void* ConvertStringToANSI(HEAP_PTR pHeapEntry) {
 static void* ConvertStringToUnicode(HEAP_PTR pHeapEntry) {
 	U32 strLen;
 	STRING2 str = SystemString_GetString(pHeapEntry, &strLen);
-	unsigned short *pUnicode = (unsigned short*)malloc((strLen+1) << 1);
+	unsigned short *pUnicode = (unsigned short*)malloc((strLen + 1) << 1);
 	memcpy(pUnicode, str, strLen << 1);
 	pUnicode[strLen] = 0;
 	return pUnicode;
@@ -134,12 +154,12 @@ static void* ConvertStringToUnicode(HEAP_PTR pHeapEntry) {
 
 #include "PInvoke_TypeDef.h"
 
-typedef U64    (STDCALL *_uCuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4);
-typedef U64    (STDCALL *_uCuuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4, U32 _5);
-typedef U64    (STDCALL *_uCuuuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4, U32 _5, U32 _6);
-typedef U64    (STDCALL *_uCuuuuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4, U32 _5, U32 _6, U32 _7);
-typedef U64    (STDCALL *_uCuuuuuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4, U32 _5, U32 _6, U32 _7, U32 _8);
-typedef U64    (STDCALL *_uCuuuuuuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4, U32 _5, U32 _6, U32 _7, U32 _8, U32 _9);
+typedef U64(STDCALL *_uCuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4);
+typedef U64(STDCALL *_uCuuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4, U32 _5);
+typedef U64(STDCALL *_uCuuuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4, U32 _5, U32 _6);
+typedef U64(STDCALL *_uCuuuuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4, U32 _5, U32 _6, U32 _7);
+typedef U64(STDCALL *_uCuuuuuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4, U32 _5, U32 _6, U32 _7, U32 _8);
+typedef U64(STDCALL *_uCuuuuuuuuuu)(U32 _0, U32 _1, U32 _2, U32 _3, U32 _4, U32 _5, U32 _6, U32 _7, U32 _8, U32 _9);
 
 #define CALL0(returnType) (returnType)
 #define CALL1(returnType, t0) ((returnType) | ((t0)<<2))
@@ -169,7 +189,7 @@ U32 PInvoke_Call(tJITCallPInvoke *pCall, PTR pParams, PTR pReturnValue, tThread 
 	tMD_MethodDef *pMethod = pCall->pMethod;
 	tMD_TypeDef *pReturnType = pMethod->pReturnType;
 	tMD_ImplMap *pImplMap = pCall->pImplMap;
-	fnPInvoke pFn = pCall->fn;
+	void *pFn = pCall->fn; //fnPInvoke pFn = pCall->fn;
 	U32 _argOfs = 0, _argdOfs = 0, paramOfs = 0;
 	U32 _tempMemOfs = 0;
 	U32 i;
@@ -190,22 +210,23 @@ U32 PInvoke_Call(tJITCallPInvoke *pCall, PTR pParams, PTR pReturnValue, tThread 
 	if (pReturnType != NULL) {
 		if (pReturnType == types[TYPE_SYSTEM_SINGLE]) {
 			funcParams = SINGLE;
-		} else if (pReturnType == types[TYPE_SYSTEM_DOUBLE]) {
+		}
+		else if (pReturnType == types[TYPE_SYSTEM_DOUBLE]) {
 			funcParams = DOUBLE;
 		}
 	}
 
-	// Prepend the 'libName' and 'funcName' strings to the set of arguments
-	// NOTE: These aren't currently used in js-interop.js, but they would be if I found a way
-	// to pass an arbitrary set of args without declaring the C func type in advance
-	_args[0] = (U32)MetaData_GetModuleRefName(pCall->pMethod->pMetaData, pCall->pImplMap->importScope);
-	_args[1] = (U32)pCall->pMethod->name;
-	_argOfs += 2;
-	SET_ARG_TYPE(0, DEFAULT);
-	SET_ARG_TYPE(1, DEFAULT);
+	//	// Prepend the 'libName' and 'funcName' strings to the set of arguments
+	//	// NOTE: These aren't currently used in js-interop.js, but they would be if I found a way
+	//	// to pass an arbitrary set of args without declaring the C func type in advance
+	//	_args[0] = (U32)MetaData_GetModuleRefName(pCall->pMethod->pMetaData, pCall->pImplMap->importScope);
+	//	_args[1] = (U32)pCall->pMethod->name;
+	//	_argOfs += 2;
+	//	SET_ARG_TYPE(0, DEFAULT);
+	//	SET_ARG_TYPE(1, DEFAULT);
 
 	numParams = pMethod->numberOfParameters;
-	for (param = 0, paramTypeNum = 0; param<numParams; param++, paramTypeNum++) {
+	for (param = 0, paramTypeNum = 0; param < numParams; param++, paramTypeNum++) {
 		tParameter *pParam = &(pMethod->pParams[param]);
 		tMD_TypeDef *pParamType = pParam->pTypeDef;
 		U32 paramType = DEFAULT;
@@ -214,14 +235,17 @@ U32 PInvoke_Call(tJITCallPInvoke *pCall, PTR pParams, PTR pReturnValue, tThread 
 			_args[_argOfs] = *(U32*)(pParams + paramOfs);
 			_argOfs++;
 			paramOfs += 4;
-		} else if (pParamType == types[TYPE_SYSTEM_STRING]) {
+		}
+		else if (pParamType == types[TYPE_SYSTEM_STRING]) {
 			// Allocate a temp bit of memory for the string that's been converted.
 			void *pString;
 			if (IMPLMAP_ISCHARSET_ANSI(pImplMap) || IMPLMAP_ISCHARSET_AUTO(pImplMap) || IMPLMAP_ISCHARSET_NOTSPEC(pImplMap)) {
 				pString = ConvertStringToANSI(*(HEAP_PTR*)(pParams + paramOfs));
-			} else if (IMPLMAP_ISCHARSET_UNICODE(pImplMap)) {
+			}
+			else if (IMPLMAP_ISCHARSET_UNICODE(pImplMap)) {
 				pString = ConvertStringToUnicode(*(HEAP_PTR*)(pParams + paramOfs));
-			} else {
+			}
+			else {
 				Crash("PInvoke_Call() Cannot handle string marshalling of given type");
 			}
 			_pTempMem[_tempMemOfs] = pString;
@@ -229,71 +253,75 @@ U32 PInvoke_Call(tJITCallPInvoke *pCall, PTR pParams, PTR pReturnValue, tThread 
 			_args[_argOfs] = (U32)pString;
 			_argOfs++;
 			paramOfs += 4;
-		} else if (pParamType == types[TYPE_SYSTEM_INTPTR]) {
+		}
+		else if (pParamType == types[TYPE_SYSTEM_INTPTR]) {
 			// Only works for 32-bit
 			_args[_argOfs] = *(U32*)(pParams + paramOfs);
 			_argOfs++;
 			paramOfs += 4;
-		} else if (pParamType == types[TYPE_SYSTEM_SINGLE]) {
+		}
+		else if (pParamType == types[TYPE_SYSTEM_SINGLE]) {
 			_argsd[_argdOfs] = *(float*)(pParams + paramOfs);
 			_argdOfs++;
 			paramOfs += 4;
 			paramType = SINGLE;
-		} else if (pParamType == types[TYPE_SYSTEM_DOUBLE]) {
+		}
+		else if (pParamType == types[TYPE_SYSTEM_DOUBLE]) {
 			_argsd[_argdOfs] = *(double*)(pParams + paramOfs);
 			_argdOfs++;
 			paramOfs += 8;
 			paramType = DOUBLE;
-		} else {
+		}
+		else {
 			Crash("PInvoke_Call() Cannot handle parameter of type: %s", pParamType->name);
 		}
-		SET_ARG_TYPE(paramTypeNum + 2, paramType);
+		
+		SET_ARG_TYPE(paramTypeNum, paramType); //SET_ARG_TYPE(paramTypeNum + 2, paramType); <-- this change in Blazor completely breaks the P/Invoke parameter lookup
 	}
 
-	// [Steve edit] I'm hard-coding the pinvoke function pointer type here, as a workaround for
-	// Emscripten's function pointer limitations.
-	// See the longer comment in JIT.h for details.
-	if (funcParams != 255) {
-		Crash("PInvoke_Call() currently only supports calls of type 255; you tried to make a call of type %i.\n", funcParams);
-	}
-	int intRet = pFn((STRING)_args[0], (STRING)_args[1], (STRING)_args[2]);
-	u64Ret = (U64)intRet;
+	//	// [Steve edit] I'm hard-coding the pinvoke function pointer type here, as a workaround for
+	//	// Emscripten's function pointer limitations.
+	//	// See the longer comment in JIT.h for details.
+	//	if (funcParams != 255) {
+	//		Crash("PInvoke_Call() currently only supports calls of type 255; you tried to make a call of type %i.\n", funcParams);
+	//	}
+	//	int intRet = pFn((STRING)_args[0], (STRING)_args[1], (STRING)_args[2]);
+	//	u64Ret = (U64)intRet;
 
-	/*
 	switch (funcParams) {
+		
+		#include "PInvoke_CaseCode.h"
+		
+		case CALL5(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
+			u64Ret = ((_uCuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4]);
+			break;
 
-#include "PInvoke_CaseCode.h"
+		case CALL6(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
+			u64Ret = ((_uCuuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5]);
+			break;
 
-	case CALL5(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
-		u64Ret = ((_uCuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4]);
-		break;
+		case CALL7(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
+			u64Ret = ((_uCuuuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5], _args[6]);
+			break;
 
-	case CALL6(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
-		u64Ret = ((_uCuuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5]);
-		break;
+		case CALL8(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
+			u64Ret = ((_uCuuuuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5], _args[6], _args[7]);
+			break;
 
-	case CALL7(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
-		u64Ret = ((_uCuuuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5], _args[6]);
-		break;
+		case CALL9(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
+			u64Ret = ((_uCuuuuuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5], _args[6], _args[7], _args[8]);
+			break;
 
-	case CALL8(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
-		u64Ret = ((_uCuuuuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5], _args[6], _args[7]);
-		break;
+		case CALL10(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
+			u64Ret = ((_uCuuuuuuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5], _args[6], _args[7], _args[8], _args[9]);
+			break;
 
-	case CALL9(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
-		u64Ret = ((_uCuuuuuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5], _args[6], _args[7], _args[8]);
-		break;
-
-	case CALL10(DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT):
-		u64Ret = ((_uCuuuuuuuuuu)(pFn))(_args[0], _args[1], _args[2], _args[3], _args[4], _args[5], _args[6], _args[7], _args[8], _args[9]);
-		break;
-
-	default:
-		Crash("PInvoke_Call() Cannot handle the function parameters: 0x%08x", funcParams);
+		default:
+			Crash("PInvoke_Call() Cannot handle the function parameters: 0x%08x", funcParams);
 	}
-	*/
 
-	for (i=0; i<_tempMemOfs; i++) {
+
+	for (i = 0; i < _tempMemOfs; i++) {
 		free(_pTempMem[i]);
 	}
 
@@ -310,9 +338,11 @@ U32 PInvoke_Call(tJITCallPInvoke *pCall, PTR pParams, PTR pReturnValue, tThread 
 	if (pReturnType == types[TYPE_SYSTEM_STRING]) {
 		if (IMPLMAP_ISCHARSET_ANSI(pImplMap) || IMPLMAP_ISCHARSET_AUTO(pImplMap) || IMPLMAP_ISCHARSET_NOTSPEC(pImplMap)) {
 			*(HEAP_PTR*)pReturnValue = SystemString_FromCharPtrASCII((U8*)(U32)u64Ret);
-		} else if (IMPLMAP_ISCHARSET_UNICODE(pImplMap)) {
+		}
+		else if (IMPLMAP_ISCHARSET_UNICODE(pImplMap)) {
 			*(HEAP_PTR*)pReturnValue = SystemString_FromCharPtrUTF16((U16*)(U32)u64Ret);
-		} else {
+		}
+		else {
 			Crash("PInvoke_Call() Cannot handle return string in specified format");
 		}
 		return sizeof(void*);

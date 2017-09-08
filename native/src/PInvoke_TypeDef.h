@@ -21,6 +21,7 @@
 typedef float  (STDCALL *_fC)();
 typedef double (STDCALL *_dC)();
 typedef U64    (STDCALL *_uC)();
+typedef U32    (STDCALL *_uCu32)(U32 _0);
 typedef float  (STDCALL *_fCf)(float _0);
 typedef float  (STDCALL *_fCd)(double _0);
 typedef float  (STDCALL *_fCu)(U32 _0);

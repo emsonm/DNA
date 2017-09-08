@@ -30,8 +30,10 @@ void* mallocTrace(int s, char *pFile, int line);
 
 #ifdef _DEBUG
 #define Assert(cond) if (!(cond)) Crash("Assert failed: %s, line %d", __FILE__, __LINE__);
+#define Assert2(cond, text) if (!(cond)) Crash(text " Assert failed: %s, line %d", __FILE__, __LINE__);
 #else
 #define Assert(cond)
+#define Assert2(cond, text)
 #endif
 
 #define FAKE_RETURN exit(101)

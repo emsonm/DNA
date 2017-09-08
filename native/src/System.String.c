@@ -31,17 +31,10 @@
 #include "Type.h"
 #include "System.Array.h"
 
-typedef struct tSystemString_ tSystemString;
-// This structure must tie up with string.cs
-struct tSystemString_ {
-	// Length in characters (not bytes)
-	U32 length;
-	// The characters
-	U16 chars[0];
-};
+
 
 // length in characters, not bytes
-static tSystemString* CreateStringHeapObj(U32 len) {
+tSystemString* SystemString_CreateStringHeapObj(U32 len) {
 	tSystemString *pSystemString;
 	U32 totalSize;
 	
@@ -58,7 +51,7 @@ tAsyncCall* System_String_ctor_CharInt32(PTR pThis_, PTR pParams, PTR pReturnVal
 
 	c = (CHAR2)(((U32*)pParams)[0]);
 	len = ((U32*)pParams)[1];
-	pSystemString = CreateStringHeapObj(len);
+	pSystemString = SystemString_CreateStringHeapObj(len);
 	for (i=0; i<len; i++) {
 		pSystemString->chars[i] = c;
 	}
@@ -78,7 +71,7 @@ tAsyncCall* System_String_ctor_CharAIntInt(PTR pThis_, PTR pParams, PTR pReturnV
 	length = ((U32*)pParams)[2];
 
 	charElements = SystemArray_GetElements(charArray);
-	pSystemString = CreateStringHeapObj(length);
+	pSystemString = SystemString_CreateStringHeapObj(length);
 	memcpy(pSystemString->chars, charElements + (startIndex << 1), length << 1);
 	*(HEAP_PTR*)pReturnValue = (HEAP_PTR)pSystemString;
 
@@ -93,7 +86,7 @@ tAsyncCall* System_String_ctor_StringIntInt(PTR pThis_, PTR pParams, PTR pReturn
 	startIndex = ((U32*)pParams)[1];
 	length = ((U32*)pParams)[2];
 
-	pThis = CreateStringHeapObj(length);
+	pThis = SystemString_CreateStringHeapObj(length);
 	memcpy(pThis->chars, &pStr->chars[startIndex], length << 1);
 	*(HEAP_PTR*)pReturnValue = (HEAP_PTR)pThis;
 
@@ -115,7 +108,7 @@ tAsyncCall* System_String_InternalConcat(PTR pThis_, PTR pParams, PTR pReturnVal
 
 	s0 = (tSystemString*)(((HEAP_PTR*)pParams)[0]);
 	s1 = (tSystemString*)(((HEAP_PTR*)pParams)[1]);
-	ret = CreateStringHeapObj(s0->length + s1->length);
+	ret = SystemString_CreateStringHeapObj(s0->length + s1->length);
 	memcpy(ret->chars, s0->chars, s0->length << 1);
 	memcpy(&ret->chars[s0->length], s1->chars, s1->length << 1);
 	*(HEAP_PTR*)pReturnValue = (HEAP_PTR)ret;
@@ -177,7 +170,7 @@ tAsyncCall* System_String_InternalTrim(PTR pThis_, PTR pParams, PTR pReturnValue
 		}
 	}
 
-	pRet = CreateStringHeapObj(ofsEnd - ofsStart);
+	pRet = SystemString_CreateStringHeapObj(ofsEnd - ofsStart);
 	memcpy(pRet->chars, &pThis->chars[ofsStart], (ofsEnd - ofsStart) << 1);
 	*(HEAP_PTR*)pReturnValue = (HEAP_PTR)pRet;
 
@@ -207,7 +200,7 @@ tAsyncCall* System_String_GetHashCode(PTR pThis_, PTR pParams, PTR pReturnValue)
 	tSystemString *pThis = (tSystemString*)pThis_;
 	U16 *pChar, *pEnd;
 	I32 hash;
-	
+	printf("GHC len=%i",pThis->length);
 	hash = 0;
 	pChar = pThis->chars;
 	pEnd = pChar + pThis->length - 1;
@@ -256,7 +249,7 @@ tAsyncCall* System_String_InternalReplace(PTR pThis_, PTR pParams, PTR pReturnVa
 		}
 	}
 	resultLen = thisLen - (oldLen - newLen) * replacements;
-	pResult = CreateStringHeapObj(resultLen);
+	pResult = SystemString_CreateStringHeapObj(resultLen);
 	pResultChar0 = pResult->chars;
 	dstIndex = 0;
 	for (i=0; i<thisLen; i++) {
@@ -358,7 +351,7 @@ HEAP_PTR SystemString_FromUserStrings(tMetaData *pMetaData, IDX_USERSTRINGS inde
 	
 	string = MetaData_GetUserString(pMetaData, index, &stringLen);
 	// Note: stringLen is in bytes
-	pSystemString = (tSystemString*)CreateStringHeapObj(stringLen >> 1);
+	pSystemString = (tSystemString*)SystemString_CreateStringHeapObj(stringLen >> 1);
 	memcpy(pSystemString->chars, string, stringLen);
 	return (HEAP_PTR)pSystemString;
 }
@@ -368,7 +361,7 @@ HEAP_PTR SystemString_FromCharPtrASCII(U8 *pStr) {
 	tSystemString *pSystemString;
 
 	stringLen = (int)strlen(pStr);
-	pSystemString = CreateStringHeapObj(stringLen);
+	pSystemString = SystemString_CreateStringHeapObj(stringLen);
 	for (i=0; i<stringLen; i++) {
 		pSystemString->chars[i] = pStr[i];
 	}
@@ -382,7 +375,7 @@ HEAP_PTR SystemString_FromCharPtrUTF16(U16 *pStr) {
 	while (pStr[strLen] != 0) {
 		strLen++;
 	}
-	pSystemString = CreateStringHeapObj(strLen);
+	pSystemString = SystemString_CreateStringHeapObj(strLen);
 	memcpy(pSystemString->chars, pStr, strLen << 1);
 	return (HEAP_PTR)pSystemString;
 }

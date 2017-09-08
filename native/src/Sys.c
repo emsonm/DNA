@@ -63,6 +63,9 @@ void log_f(U32 level, char *pMsg, ...) {
 		vprintf(pMsg, va);
 		va_end(va);
 	}
+#if _DEBUG
+	fflush(stdout);
+#endif
 }
 
 static char methodName[2048];

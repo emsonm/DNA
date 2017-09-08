@@ -42,4 +42,17 @@ HEAP_PTR SystemString_FromCharPtrUTF16(U16 *pStr);
 STRING2 SystemString_GetString(HEAP_PTR pThis_, U32 *pLength);
 U32 SystemString_GetNumBytes(HEAP_PTR pThis_);
 
+typedef struct tSystemString_ tSystemString;
+// This structure must tie up with string.cs
+struct tSystemString_ {
+	// Length in characters (not bytes)
+	U32 length;
+	// The characters
+	U16 chars[0];
+};
+
+// length in characters, not bytes
+tSystemString* SystemString_CreateStringHeapObj(U32 len);
+
+
 #endif

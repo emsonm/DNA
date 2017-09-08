@@ -52,6 +52,9 @@ int main(int argc, char **argp) {
 		ShowUsage();
 	}
 
+	//enable this to stop the execution and allow the debugger to attach
+	//while (1)	;
+
 	// Read any flags passed in
 	for (i=1; i < (U32)argc; i++) {
 		if (argp[i][0] == '-') {
