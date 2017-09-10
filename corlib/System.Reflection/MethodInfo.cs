@@ -1,22 +1,25 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace System.Reflection
 {
-    public abstract class MethodInfo : MethodBase
+    public /*abstract*/ class MethodInfo : MethodBase
     {
-    }
-
-    public abstract class MethodBase : MemberInfo
-    {
-#pragma warning disable 0169, 0649
-        private readonly IntPtr _methodDef;
-#pragma warning restore 0169, 0649
-        
-        public object Invoke(object target, object[] parameters)
+        private string name;
+        private int numparams;
+        public MethodInfo() { }
+        public MethodInfo(string name, int numparams) {
+            this.name = name;
+            this.numparams = numparams;
+        }
+        public override string Name
         {
-            // This is not invoked at runtime, because the JITter specifically replaces calls
-            // to MethodBase.Invoke with its own special opcode
-            throw new NotImplementedException();
+            get { return name; }
+        }
+        public override ParameterInfo[] GetParameters()
+        {
+            return new ParameterInfo[numparams];
         }
     }
 }

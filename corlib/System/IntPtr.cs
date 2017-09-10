@@ -56,7 +56,19 @@ namespace System {
 				return string.Format("0x{0:x8}", (long)this.value);
 			}
 		}
-	}
+
+        public string ToString(string formatCode)
+        {
+            if (formatCode == "x")
+            {
+                return ToString();
+            }
+            else
+            {
+                throw new ArgumentException("formatCode");
+            }
+        }
+    }
 }
 
 #endif

@@ -11,4 +11,17 @@
     <RuntimeMetadataVersion>0</RuntimeMetadataVersion> <!-- Not sure what this affects, but there's a warning if you don't have some value -->
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="System.Web\**" />
+    <Compile Remove="System.Windows.Forms\**" />
+    <EmbeddedResource Remove="System.Web\**" />
+    <EmbeddedResource Remove="System.Windows.Forms\**" />
+    <None Remove="System.Web\**" />
+    <None Remove="System.Windows.Forms\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="System.Web\Util\" />
+  </ItemGroup>
+
 </Project>

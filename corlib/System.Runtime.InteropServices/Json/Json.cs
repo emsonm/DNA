@@ -556,18 +556,20 @@ namespace Blazor.System.Runtime.InteropServices.Json
 
             private Dictionary<string, object> GetPropsAsDict(object value)
             {
-                var propsDict = new Dictionary<string, object>();
-                var propInfos = value.GetType().GetRuntimeProperties();
-                foreach (var pi in propInfos)
-                {
-                    var getMethod = pi.GetMethod;
-                    if (getMethod != null)
-                    {
-                        propsDict[pi.Name] = getMethod.Invoke(value, null);
-                    }
-                }
+                throw new NotImplementedException();
 
-                return propsDict;
+                //var propsDict = new Dictionary<string, object>();
+                //var propInfos = value.GetType().GetRuntimeProperties();
+                //foreach (var pi in propInfos)
+                //{
+                //    var getMethod = pi.GetMethod;
+                //    if (getMethod != null)
+                //    {
+                //        propsDict[pi.Name] = getMethod.Invoke(value, null);
+                //    }
+                //}
+
+                //return propsDict;
             }
         }
     }

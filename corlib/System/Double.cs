@@ -122,7 +122,17 @@ namespace System {
 
 		#endregion
 
-	}
+
+        internal static double Parse(string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static double Parse(string value, NumberStyles p, NumberFormatInfo numberFormatInfo)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
 
 #endif

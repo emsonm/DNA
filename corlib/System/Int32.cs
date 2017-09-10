@@ -43,8 +43,14 @@ namespace System {
 		}
 
 		public static bool TryParse(string s, out int result) {
-			return TryParse(s, NumberStyles.Integer, null, out result);
+			return TryParse(s, NumberStyles.Integer, (IFormatProvider)null, out result);
 		}
+
+        public static bool TryParse(string s, NumberStyles style, CultureInfo c, out int result)
+        {
+            Exception e;
+            return ParseHelper.Parse(s, style, (IFormatProvider)c, true, out result, out e);
+        }
 
 		public static bool TryParse(string s, NumberStyles style,IFormatProvider format, out int result) {
 			Exception e;

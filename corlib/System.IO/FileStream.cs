@@ -66,9 +66,27 @@ namespace System.IO {
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void Write(byte[] buffer, int offset, int count) {
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public override void Write(byte[] buffer, int offset, int count) {
+            if (this.handle == IntPtr.Zero)
+            {
+                throw new ObjectDisposedException("Stream has been closed");
+            }
+            if (offset < 0 || count < 0 || offset + count > buffer.Length)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            int error;
+            int ret = FileInternal.Write(this.handle, buffer, offset, count, out error);
+            if (error != 0)
+            {
+                throw FileInternal.GetException(error, this.filename);
+            }
+            if (ret != count)
+            {
+                throw new IOException("Not all data written :/");
+            }
+        }
 
 		public override bool CanRead {
 			get {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace System.Globalization {
-	public class CultureInfo {
+    public class CultureInfo:IFormatProvider {
 
 		#region Static methods
 
@@ -267,7 +267,21 @@ namespace System.Globalization {
 			return this.name;
 		}
 
-	}
+
+        public virtual object GetFormat(Type formatType)
+        {
+            object dateTimeFormat = null;
+            if (formatType == typeof(NumberFormatInfo))
+            {
+                return this.NumberFormat;
+            }
+            if (formatType == typeof(DateTimeFormatInfo))
+            {
+                dateTimeFormat = this.DateTimeFormat;
+            }
+            return dateTimeFormat;
+        }
+    }
 }
 
 #endif

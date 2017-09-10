@@ -217,7 +217,15 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static double Pow(double x, double y);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        public extern static double Log(double x);
+
+        public static double Log(double x, double @base)
+        {
+            return Log(x) / Log(@base);
+        }
+        
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static double Sqrt(double x);
 	}
 }

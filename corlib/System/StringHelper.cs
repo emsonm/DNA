@@ -121,7 +121,12 @@ namespace System {
 					} else if (arg is IFormattable) {
 						str = ((IFormattable)arg).ToString(argFormat, provider);
 					} else {
-						str = arg.ToString();
+                        try
+                        {
+                            str = arg.ToString();
+                        }
+                        catch { str = "<Exception>"; }
+                        if (str == null) str = String.Empty;
 					}
 					// Apply any padding needed and append to result
 					if (width > str.Length) {

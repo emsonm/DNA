@@ -5,6 +5,7 @@ namespace System.IO {
 
 		public IOException() : base("I/O Error") { }
 		public IOException(string message) : base(message) { }
+		public IOException(string message,Exception inner) : base(message,inner) { }
 
 	}
 }

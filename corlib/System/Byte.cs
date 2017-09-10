@@ -69,7 +69,14 @@ namespace System {
 
 		#endregion
 
-	}
+
+        internal static byte Parse(string value)
+        {
+            int p = int.Parse(value);
+            if (p < 0 || p > 255) throw new OverflowException();
+            return (byte)p;
+        }
+    }
 }
 
 #endif

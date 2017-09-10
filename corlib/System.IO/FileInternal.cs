@@ -10,7 +10,10 @@ namespace System.IO {
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		extern public static int Read(IntPtr handle, byte[] dst, int dstOfs, int count, out int error);
 
-		[MethodImpl(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        extern public static int Write(IntPtr handle, byte[] src, int dstOfs, int count, out int error);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
 		extern public static void Close(IntPtr handle, out int error);
 
 		[MethodImpl(MethodImplOptions.InternalCall)]

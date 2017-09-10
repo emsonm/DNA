@@ -143,6 +143,15 @@ namespace System.Globalization {
 		public string TimeSeparator { get { return this.timeSeparator; } }
 		public string UniversalSortableDateTimePattern { get { return this.universalSortableDateTimePattern; } }
 		public string YearMonthPattern { get { return this.yearMonthPattern; } }
+
+		internal string RoundtripPattern
+	    {
+	        get
+	        {
+	            return "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK";
+	        }
+	    }
+
 		public Calendar Calendar { get { return this.calendar; } }
 
 		public string GetAbbreviatedDayName(DayOfWeek dow) {

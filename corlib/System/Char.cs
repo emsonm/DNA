@@ -42,6 +42,9 @@ namespace System {
         internal char m_value;
 #pragma warning restore 0649
 
+        public const char MinValue='\0';
+        public const char MaxValue = '\xffff';
+
         public override string ToString() {
 			return new string(m_value, 1);
 		}
@@ -56,6 +59,37 @@ namespace System {
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		extern static public UnicodeCategory GetUnicodeCategory(char c);
+
+        public static bool IsSurrogatePair(string s, int index)
+        {
+       //     CheckParameter(s, index);
+            return (((index + 1) < s.Length) && IsSurrogatePair(s[index], s[index + 1]));
+        }
+
+
+
+
+        public static bool IsSurrogatePair(char highSurrogate, char lowSurrogate)
+        {
+            return ((((55296 <= highSurrogate) && (highSurrogate <= 56319)) && (56320 <= lowSurrogate)) && (lowSurrogate <= 57343));
+        }
+
+
+
+
+        public static bool IsSurrogate(string s, int index)
+        {
+          
+            return IsSurrogate(s[index]);
+        }
+
+
+        public static unsafe bool IsSurrogate(char c)
+        {
+            return GetUnicodeCategory(c) == UnicodeCategory.Surrogate;
+        }
+
+
 
 		public static UnicodeCategory GetUnicodeCategory(string str, int index) {
 			if (str == null) {
@@ -91,6 +125,16 @@ namespace System {
 			return GetUnicodeCategory(c) <= UnicodeCategory.OtherLetter;
 		}
 
+        public static bool IsLetterOrDigit(char c)
+        {
+            var gc = GetUnicodeCategory(c);
+            if (gc <= UnicodeCategory.OtherLetter) return true;
+            if (gc == UnicodeCategory.DecimalDigitNumber) return true;
+            if (gc == UnicodeCategory.LetterNumber) return true;
+            if (gc == UnicodeCategory.OtherNumber) return true;
+            return false;
+        }
+ 
 		public static bool IsLetter(string str, int index) {
 			if (str == null) {
 				throw new ArgumentNullException("str");

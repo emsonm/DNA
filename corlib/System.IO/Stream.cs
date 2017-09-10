@@ -79,7 +79,31 @@ namespace System.IO {
 			Write(buffer, 0, 1);
 		}
 
-	}
+        public virtual int ReadTimeout
+        {
+            get
+            {
+                throw new InvalidOperationException("Timeouts are not supported on this stream.");
+            }
+            set
+            {
+                throw new InvalidOperationException("Timeouts are not supported on this stream.");
+            }
+        }
+
+        public virtual int WriteTimeout
+        {
+            get
+            {
+                throw new InvalidOperationException("Timeouts are not supported on this stream.");
+            }
+            set
+            {
+                throw new InvalidOperationException("Timeouts are not supported on this stream.");
+            }
+        }
+
+    }
 }
 
 #endif

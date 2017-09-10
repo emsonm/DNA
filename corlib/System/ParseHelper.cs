@@ -5,7 +5,7 @@ using System.Threading;
 namespace System {
 	internal static class ParseHelper {
 
-		private static bool CheckStyle(NumberStyles style, bool tryParse, ref Exception exc) {
+		internal static bool CheckStyle(NumberStyles style, bool tryParse, ref Exception exc) {
 			if ((style & NumberStyles.AllowHexSpecifier) != 0) {
 				NumberStyles ne = style ^ NumberStyles.AllowHexSpecifier;
 				if ((ne & NumberStyles.AllowLeadingWhite) != 0) {
@@ -28,7 +28,7 @@ namespace System {
 			return true;
 		}
 
-		private static bool JumpOverWhite(ref int pos, string s, bool reportError, bool tryParse, ref Exception exc) {
+		internal static bool JumpOverWhite(ref int pos, string s, bool reportError, bool tryParse, ref Exception exc) {
 			while (pos < s.Length && Char.IsWhiteSpace(s[pos])) {
 				pos++;
 			}
@@ -42,7 +42,7 @@ namespace System {
 			return true;
 		}
 
-		private static void FindSign(ref int pos, string s, NumberFormatInfo nfi,
+		internal static void FindSign(ref int pos, string s, NumberFormatInfo nfi,
 			ref bool foundSign, ref bool negative) {
 			if ((pos + nfi.NegativeSign.Length) <= s.Length &&
 				s.IndexOf(nfi.NegativeSign, pos, nfi.NegativeSign.Length) == pos) {
@@ -57,7 +57,7 @@ namespace System {
 			}
 		}
 
-		private static void FindCurrency(ref int pos, string s, NumberFormatInfo nfi, ref bool foundCurrency) {
+		internal static void FindCurrency(ref int pos, string s, NumberFormatInfo nfi, ref bool foundCurrency) {
 			if ((pos + nfi.CurrencySymbol.Length) <= s.Length &&
 				 s.Substring(pos, nfi.CurrencySymbol.Length) == nfi.CurrencySymbol) {
 				foundCurrency = true;
@@ -65,7 +65,7 @@ namespace System {
 			}
 		}
 
-		private static bool FindExponent(ref int pos, string s) {
+		internal static bool FindExponent(ref int pos, string s) {
 			int i = s.IndexOfAny(new char[] { 'e', 'E' }, pos);
 			if (i < 0) {
 				return false;
@@ -90,7 +90,7 @@ namespace System {
 			return true;
 		}
 
-		private static bool FindOther(ref int pos, string s, string other) {
+		internal static bool FindOther(ref int pos, string s, string other) {
 			if ((pos + other.Length) <= s.Length && s.Substring(pos, other.Length) == other) {
 				pos += other.Length;
 				return true;
@@ -98,16 +98,35 @@ namespace System {
 			return false;
 		}
 
-		private static bool ValidDigit(char e, bool allowHex) {
+		internal static bool ValidDigit(char e, bool allowHex) {
 			if (allowHex) {
 				return Char.IsDigit(e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 			}
 			return Char.IsDigit(e);
 		}
 
-		private static Exception GetFormatException() {
+		internal static Exception GetFormatException() {
 			return new FormatException("Input string was not in the correct format");
 		}
+
+        internal static bool ProcessTrailingWhitespace(bool tryParse, string s, int position, ref Exception exc)
+        {
+            int length = s.Length;
+            for (int i = position; i < length; i++)
+            {
+                char c = s[i];
+                if ((c != '\0') && !char.IsWhiteSpace(c))
+                {
+                    if (!tryParse)
+                    {
+                        exc = GetFormatException();
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
 		internal static bool Parse(string s, NumberStyles style, IFormatProvider fp, bool tryParse, out int result, out Exception exc) {
 			result = 0;

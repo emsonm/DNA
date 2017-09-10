@@ -1,5 +1,7 @@
 #if !LOCALTEST
 
+using System.Reflection;
+using System.Runtime.CompilerServices;
 namespace System {
 	public abstract class Delegate {
 
@@ -8,6 +10,7 @@ namespace System {
 		private object targetObj = null;
 		private IntPtr targetMethod = IntPtr.Zero;
 		protected Delegate pNext = null;
+        private MethodInfo _methodBase;
 
 		public override bool Equals(object obj) {
 			Delegate d = obj as Delegate;
@@ -56,6 +59,56 @@ namespace System {
 			}
 			return this;
 		}
+
+        public MethodInfo Method
+        {
+            get
+            {
+                return this.GetMethodImpl();
+            }
+        }
+
+        protected virtual MethodInfo GetMethodImpl()
+        {
+            if (this._methodBase == null)
+            {
+                this._methodBase = new MethodInfo(this.GetMethodNameImpl(), this.GetParameterCountImpl());
+                //RuntimeMethodHandle methodHandle = this.FindMethodHandle();
+                //RuntimeTypeHandle declaringType = methodHandle.GetDeclaringType();
+                //if ((declaringType.IsGenericTypeDefinition() || declaringType.HasInstantiation()) && ((methodHandle.GetAttributes() & MethodAttributes.Static) == MethodAttributes.ReuseSlot))
+                //{
+                //    if (!(this._methodPtrAux == IntPtr.Zero))
+                //    {
+                //        declaringType = base.GetType().GetMethod("Invoke").GetParameters()[0].ParameterType.TypeHandle;
+                //    }
+                //    else
+                //    {
+                //        Type baseType = this._target.GetType();
+                //        Type genericTypeDefinition = declaringType.GetRuntimeType().GetGenericTypeDefinition();
+                //        while (true)
+                //        {
+                //            if (baseType.IsGenericType && (baseType.GetGenericTypeDefinition() == genericTypeDefinition))
+                //            {
+                //                break;
+                //            }
+                //            baseType = baseType.BaseType;
+                //        }
+                //        declaringType = baseType.TypeHandle;
+                //    }
+                //}
+                //this._methodBase = (MethodInfo)RuntimeType.GetMethodBase(declaringType, methodHandle);
+            }
+            return (MethodInfo)this._methodBase;
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private extern string GetMethodNameImpl();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private extern int GetParameterCountImpl();
+      
+
+ 
 	}
 }
 

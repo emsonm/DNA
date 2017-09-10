@@ -428,6 +428,59 @@ namespace System {
 		}
 
 		#endregion
+
+
+        public static void Sort(Array array)
+        {
+            if (array == null)
+            {
+                throw new ArgumentNullException();
+            }
+            Sort(array, null, 0, array.length, null);
+        }
+
+        public static void Sort(Array array, int index, int length, IComparer comparer)
+        {
+            Sort(array, null, index, length, comparer);
+        }
+
+        public static void Sort(Array keys, Array items, int index, int length, IComparer comparer)
+        {
+            if (keys == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if ((keys.Rank != 1) || ((items != null) && (items.Rank != 1)))
+            {
+                throw new ArgumentException();
+            }
+            if ((index < 0) || (length < 0))
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+            if (((keys.length - index) < length) || ((items != null) && (index > (items.length - length))))
+            {
+                throw new ArgumentException();
+            }
+            if (length > 1)
+            {
+                object[] objArray = keys as object[];
+                object[] objArray2 = null;
+                if (objArray != null)
+                {
+                    objArray2 = items as object[];
+                }
+                if ((objArray != null) && ((items == null) || (objArray2 != null)))
+                {
+                    new SorterObjectArray(objArray, objArray2, comparer).QuickSort(index, (index + length) - 1);
+                }
+                else
+                {
+                    new SorterGenericArray(keys, items, comparer).QuickSort(index, (index + length) - 1);
+                }
+            }
+        }
+
 	}
 
 }
