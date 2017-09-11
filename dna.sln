@@ -7,11 +7,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dna", "native\dna.vcxproj",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "corlib", "corlib\corlib.csproj", "{E236041A-1327-4A58-9D44-5DB389FB6071}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PInvokeTest", "PInvokeTest\PInvokeTest.csproj", "{F88C0EE0-2EDD-4929-92BC-7AF251EB8A6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PInvokeTest", "PInvokeTest\PInvokeTest.csproj", "{F88C0EE0-2EDD-4929-92BC-7AF251EB8A6C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libSimple", "libSimple\libSimple.vcxproj", "{5DA301EE-977F-4733-BB21-219FCA7E68E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testSimple", "testSimple\testSimple.csproj", "{62FE7024-59E5-48B2-AD4B-C9B6F41D0351}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "testSimple", "testSimple\testSimple.csproj", "{62FE7024-59E5-48B2-AD4B-C9B6F41D0351}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +24,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F7FFFA55-C1B3-4961-8DAB-C1527EF2FF22}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{F7FFFA55-C1B3-4961-8DAB-C1527EF2FF22}.Debug|Any CPU.Build.0 = Debug|Win32
 		{F7FFFA55-C1B3-4961-8DAB-C1527EF2FF22}.Debug|x64.ActiveCfg = Debug|Win32
 		{F7FFFA55-C1B3-4961-8DAB-C1527EF2FF22}.Debug|x64.Build.0 = Debug|Win32
 		{F7FFFA55-C1B3-4961-8DAB-C1527EF2FF22}.Debug|x86.ActiveCfg = Debug|Win32
@@ -34,6 +35,7 @@ Global
 		{F7FFFA55-C1B3-4961-8DAB-C1527EF2FF22}.Release|x86.ActiveCfg = Release|Win32
 		{F7FFFA55-C1B3-4961-8DAB-C1527EF2FF22}.Release|x86.Build.0 = Release|Win32
 		{E236041A-1327-4A58-9D44-5DB389FB6071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E236041A-1327-4A58-9D44-5DB389FB6071}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E236041A-1327-4A58-9D44-5DB389FB6071}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{E236041A-1327-4A58-9D44-5DB389FB6071}.Debug|x64.Build.0 = Debug|Any CPU
 		{E236041A-1327-4A58-9D44-5DB389FB6071}.Debug|x86.ActiveCfg = Debug|Any CPU
